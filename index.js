@@ -6,9 +6,11 @@ const bodyParser = require('body-parser')
 app.set('view engine', 'ejs')
 app.use(express.static('public'))
 
+// BodyParser
 app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 
-
+//Routes
 app.get('/', (req, res) => {
     res.render("index");
 })
@@ -18,9 +20,12 @@ app.get('/perguntar', (req, res) => {
 })
 
 app.post('/salvarpergunta', (req, res) => {
-    res.send("Formulário Recebido !")
+    var titulo = req.body.titulo;
+    var descricao = req.body.descricao;
+    res.send("Formulário Recebido ! titulo " + titulo + " " + " descricao " + descricao)
 })
 
+//Init server
 app.listen(3000, (req, res) => {
     console.log("listening on")
 })
