@@ -2,13 +2,13 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const connection = require('./database/database')
-
+const Pergunta = require('./database/Pergunta')
 
 //Database
 connection
     .authenticate()
     .then(() => {
-        console.log('conexão feita com o banco de dados!')
+        console.log('Conexão feita com o banco de dados!')
     })
     .catch((msgErr) => {
         console.log(msgErr)
@@ -24,7 +24,12 @@ app.use(bodyParser.json())
 
 //Routes
 app.get('/', (req, res) => {
-    res.render("index");
+    Pergunta.findAll({raw: true}).then(perguntas => {
+        res.render("index", {
+            perguntas: perguntas
+        });
+    })
+    
 })
 
 app.get('/perguntar', (req, res) => {
@@ -34,7 +39,14 @@ app.get('/perguntar', (req, res) => {
 app.post('/salvarpergunta', (req, res) => {
     var titulo = req.body.titulo;
     var descricao = req.body.descricao;
-    res.send("Formulário Recebido ! titulo " + titulo + " " + " descricao " + descricao)
+    Pergunta.create({
+        titulo: titulo,
+        descricao: descricao
+    }).then(() => {
+        res.redirect('/')
+    }).catch((msgErr) => {
+        console.log(msgErr);
+    })
 })
 
 //Init server
